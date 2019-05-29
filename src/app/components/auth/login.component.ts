@@ -5,11 +5,11 @@ import { Component, OnInit } from '@angular/core';
   template: /*html*/`
     <mat-card class="flex-column">
       <mat-form-field>
-        <input matInput placeholder="name" type="text">
+        <input matInput placeholder="email" type="email">
       </mat-form-field>
 
       <mat-form-field>
-        <input matInput placeholder="email" type="email">
+        <input matInput placeholder="password" type="password">
       </mat-form-field>
 
     </mat-card>
