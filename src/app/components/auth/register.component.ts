@@ -1,6 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services';
 
 @Component({
@@ -48,7 +47,6 @@ import { AuthService } from 'src/app/services';
           mat-raised-button
           type="submit"
           color="primary"
-          (click)="onSubmit()"
           [disabled]="form.invalid">
           Register
         </button>
@@ -59,13 +57,14 @@ import { AuthService } from 'src/app/services';
       You already have an account?
     </a>
   `,
-  styleUrls: ['./auth.scss']
+  styleUrls: ['./auth.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class RegisterComponent implements OnInit {
   public form: FormGroup;
   public formError = null;
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(private auth: AuthService) {}
 
   ngOnInit(): void {
     this.form = new FormGroup({
@@ -80,14 +79,7 @@ export class RegisterComponent implements OnInit {
       this.form.value.name,
       this.form.value.email,
       this.form.value.password
-    ).then(res => {
-      console.log(res);
-      this.router.navigate(['/']);
-    })
-    .catch(err => {
-      this.formError = err;
-      console.error(this.formError);
-    });
+    );
   }
 
   public hasError(controlName: string, typeError: string): boolean {

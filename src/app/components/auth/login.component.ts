@@ -1,6 +1,5 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
 import { AuthService } from 'src/app/services';
 
 @Component({
@@ -37,8 +36,7 @@ import { AuthService } from 'src/app/services';
         <button class="auth-form__submit"
           mat-raised-button
           type="submit"
-          color="primary"
-          (click)="onSubmit()">
+          color="primary">
           Login
         </button>
       </form>
@@ -55,7 +53,7 @@ export class LoginComponent implements OnInit {
   public form: FormGroup;
   public formError = null;
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(private auth: AuthService) {}
 
   ngOnInit(): void {
     this.form = new FormGroup({
@@ -65,16 +63,7 @@ export class LoginComponent implements OnInit {
   }
 
   public onSubmit(): void {
-    this.auth.signIn(this.form.value.email, this.form.value.password)
-      .then(res => {
-        this.router.navigate(['/']);
-        console.log(res);
-      })
-      .catch(err => {
-        this.formError = err;
-        console.error(this.formError);
-        console.error(err);
-      });
+    this.auth.signIn(this.form.value.email, this.form.value.password);
   }
 
   public hasError(controlName: string, typeError: string): boolean {

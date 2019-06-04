@@ -9,5 +9,6 @@ export const environment = {
     storageBucket: 'udemy-ng-http-f4ed4.appspot.com',
     messagingSenderId: '906238759507',
     appId: '1:906238759507:web:4bb67161efa2f5de'
-  }
+  },
+  cloudFirestorePath: 'ngrx-income-expenses-app'
  };
