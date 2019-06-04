@@ -1,14 +1,16 @@
+image: node:11.4.0
+ 
 pages:
   cache:
     paths:
     - node_modules/
-
+ 
   stage: deploy
   script:
   - npm install -g @angular/cli@8.0.1
   - npm install
   - ng build --prod --aot
-  - mv dist/ngrx-income-expenses-app/* public/
+  - mv dist/ngrx-income-expenses-app* public/
   artifacts:
     paths:
     - public
