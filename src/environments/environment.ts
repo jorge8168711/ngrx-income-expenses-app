@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  hmr: false,
   firebase: {
     apiKey: 'AIzaSyDT5a6gaNMjsRM3RkJeaPx3M8ERxcnwEDE',
     authDomain: 'udemy-ng-http-f4ed4.firebaseapp.com',

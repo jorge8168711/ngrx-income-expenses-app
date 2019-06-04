@@ -1,11 +1,13 @@
 import { Routes } from '@angular/router';
 import { NotFoundComponent } from '../components/not-found.component';
+import { AuthGuardService } from '../services';
 
 export const appRputes: Routes = [
   {
     path: '',
     loadChildren: () => import('../modules/main.module').then(m => m.MainModule),
-    pathMatch: 'full'
+    pathMatch: 'full',
+    canActivate: [ AuthGuardService ]
   },
   {
     path: 'auth',

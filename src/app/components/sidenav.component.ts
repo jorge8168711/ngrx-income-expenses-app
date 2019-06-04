@@ -2,7 +2,7 @@ import { Component, ViewEncapsulation } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
 import { map } from 'rxjs/operators';
-import { AuthService } from './auth/auth.service';
+import { AuthService } from '../services';
 
 @Component({
   selector: 'app-sidenav',
