@@ -1,13 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ViewEncapsulation } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
 import { map } from 'rxjs/operators';
+import { AuthService } from './auth/auth.service';
 
 @Component({
   selector: 'app-sidenav',
   template: /*html*/ `
     <mat-sidenav-container class="sidenav-container">
-      <mat-sidenav #drawer class="sidenav" fixedInViewport
+      <mat-sidenav #drawer class="sidenav" [fixedInViewport]="true"
         [attr.role]="(isHandset$ | async) ? 'dialog' : 'navigation'"
         [mode]="(isHandset$ | async) ? 'over' : 'side'"
         [opened]="(isHandset$ | async) === false">
@@ -31,17 +32,36 @@ import { map } from 'rxjs/operators';
             <mat-icon aria-label="Side nav toggle icon">menu</mat-icon>
           </button>
 
-          <span>angular-ngrx-income-expenses-app</span>
+          <span>Turtle...</span>
+
+          <button mat-button
+            type="button"
+            aria-label="Logout"
+            (click)="logout()">
+            Logout
+          </button>
         </mat-toolbar>
+
+        <router-outlet></router-outlet>
       </mat-sidenav-content>
     </mat-sidenav-container>
-  `
+  `,
+  styles: [ /*css*/`
+    .sidenav-container {
+      min-height: 100vh;
+    }
+  `],
+  encapsulation: ViewEncapsulation.None
 })
-export class SidenavComponent implements OnInit {
+export class SidenavComponent {
   public isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
     .pipe( map(result => result.matches) );
 
-  constructor(private breakpointObserver: BreakpointObserver) {}
+  constructor(
+    private breakpointObserver: BreakpointObserver,
+    private auth: AuthService) {}
 
-  ngOnInit(): void { }
+  public logout() {
+    this.auth.logout();
+  }
 }

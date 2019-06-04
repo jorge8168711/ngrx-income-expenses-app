@@ -1,26 +1,83 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { AuthService } from './auth.service';
+import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-login',
+  selector: 'app-login.auth-form',
   template: /*html*/`
-    <mat-card class="flex-column">
-      <mat-form-field>
-        <input matInput placeholder="email" type="email">
-      </mat-form-field>
+    <mat-card class="flex-column" [formGroup]="form">
+      <form class="flex-column"
+        [formGroup]="form"
+        (ngSubmit)="onSubmit()">
+        <mat-form-field>
+          <input matInput
+            placeholder="email"
+            type="email"
+            formControlName="email">
 
-      <mat-form-field>
-        <input matInput placeholder="password" type="password">
-      </mat-form-field>
+          <mat-error *ngIf="hasError('email', 'required')">The field is required</mat-error>
+          <mat-error *ngIf="hasError('email', 'email')">Invalid format</mat-error>
+        </mat-form-field>
 
+        <mat-form-field>
+          <input matInput
+            placeholder="password"
+            type="password"
+            formControlName="password"
+            autocomplete="off">
+
+          <mat-error *ngIf="hasError('email', 'required')">The field is required</mat-error>
+        </mat-form-field>
+
+        <mat-error *ngIf="formError && (form.dirty || form.touched)">
+          {{ formError.message }}
+        </mat-error>
+
+        <button class="auth-form__submit"
+          mat-raised-button
+          type="submit"
+          color="primary"
+          (click)="onSubmit()">
+          Login
+        </button>
+      </form>
     </mat-card>
 
     <a mat-button routerLink="register" color="primary">
       You dont have an account?
     </a>
-  `
+  `,
+  styleUrls: ['./auth.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class LoginComponent implements OnInit {
-  constructor() {}
+  public form: FormGroup;
+  public formError = null;
 
-  ngOnInit(): void { }
+  constructor(private auth: AuthService, private router: Router) {}
+
+  ngOnInit(): void {
+    this.form = new FormGroup({
+      email: new FormControl('jorge.barron@amplemind.com', [Validators.email, Validators.required]),
+      password: new FormControl('123123123', Validators.required)
+    });
+  }
+
+  public onSubmit(): void {
+    this.auth.signIn(this.form.value.email, this.form.value.password)
+      .then(res => {
+        this.router.navigate(['/']);
+        console.log(res);
+      })
+      .catch(err => {
+        this.formError = err;
+        console.error(this.formError);
+        console.error(err);
+      });
+  }
+
+  public hasError(controlName: string, typeError: string): boolean {
+    return this.form.get(controlName).hasError(typeError);
+  }
 }
