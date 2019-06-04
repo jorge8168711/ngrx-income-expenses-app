@@ -1,6 +1,6 @@
 export const environment = {
-  production: true,
-  hmr: false,
+  production: false,
+  hmr: true,
   firebase: {
     apiKey: 'AIzaSyDT5a6gaNMjsRM3RkJeaPx3M8ERxcnwEDE',
     authDomain: 'udemy-ng-http-f4ed4.firebaseapp.com',
@@ -11,4 +11,4 @@ export const environment = {
     appId: '1:906238759507:web:4bb67161efa2f5de'
   },
   cloudFirestorePath: 'ngrx-income-expenses-app'
-};
+ };

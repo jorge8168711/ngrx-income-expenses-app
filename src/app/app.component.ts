@@ -1,10 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { AuthService } from './services';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  template: /*html*/ `
+    <router-outlet></router-outlet>
+  `
 })
-export class AppComponent {
-  title = 'angular-ngrx-income-expenses-app';
+export class AppComponent implements OnInit {
+  constructor(private auth: AuthService) {}
+
+  ngOnInit(): void {
+    this.auth.initAuthListener();
+  }
 }
