@@ -11,6 +11,7 @@ pages:
   - npm install
   - ng build --prod
   - mv dist/ngrx-income-expenses-app/* public/
+  - ls -A
   artifacts:
     paths:
     - public
