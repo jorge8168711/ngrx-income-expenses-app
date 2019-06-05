@@ -1,5 +1,5 @@
 {
-  "name": "angular-ngrx-income-expenses-app",
+  "name": "ngrx-income-expenses-app",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -8,7 +8,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "hmr": "ng serve --configuration hmr"
+    "hmr": "ng serve --configuration hmr",
+    "gh-deploy": "ng build --prod --aot --base-href=\"https://jorge8168711.github.io/ngrx-income-expenses-app/\" && gh-pages -d dist/ngrx-income-expenses-app"
   },
   "private": true,
   "dependencies": {
