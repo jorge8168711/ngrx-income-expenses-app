@@ -10,7 +10,7 @@ pages:
   - npm install -g @angular/cli@8.0.1
   - npm install
   - ng build --prod
-  - mv dist/ngrx-income-expenses-app/* public/
+  - mv dist/angular-ngrx-income-expenses-app/ public/
   - ls -A
   artifacts:
     paths:
