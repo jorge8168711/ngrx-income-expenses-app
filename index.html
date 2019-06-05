@@ -12,4 +12,21 @@
 <body>
   <app-root></app-root>
 <script src="runtime-es2015.4a11f2e74399ef546681.js" type="module"></script><script src="polyfills-es2015.e954256595c973372414.js" type="module"></script><script src="runtime-es5.b92a95787beb26bded43.js" nomodule></script><script src="polyfills-es5.f3ff03881ba246940c55.js" nomodule></script><script src="main-es2015.69520130fbc8ce0559ac.js" type="module"></script><script src="main-es5.a41c78203ae3a87bba85.js" nomodule></script></body>
+
+<!-- for gh pages -->
+<script>
+  (function(){
+    var redirect = sessionStorage.redirect;
+    delete sessionStorage.redirect;
+    if (redirect && redirect != location.href) {
+      history.replaceState(null, null, redirect);
+      // REMOVE THIS - just showing the redirect route in the UI
+      document.body.setAttribute('message', 'This page was redirected by 404.html, from the route: ' + redirect);
+    }
+    else {
+      // REMOVE THIS - just showing the redirect route in the UI
+      document.body.setAttribute('message', 'This page was loaded directly from the index.html file');
+    }
+  })();
+</script>
 </html>
