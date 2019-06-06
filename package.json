@@ -9,7 +9,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "hmr": "ng serve --configuration hmr",
-    "gh-deploy": "ng build --prod --aot --base-href=\"https://jorge8168711.github.io/ngrx-income-expenses-app/\" && gh-pages -d dist/ngrx-income-expenses-app"
+    "gh-deploy": "ng build --prod --aot --base-href=\"https://jorge8168711.github.io/ngrx-income-expenses-app/\" && npx ngh --dir=dist/ngrx-income-expenses-app"
   },
   "private": true,
   "dependencies": {
@@ -43,6 +43,7 @@
     "@types/jasmine": "~2.8.8",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "~8.9.4",
+    "angular-cli-ghpages": "^0.5.3",
     "codelyzer": "^5.1.0",
     "jasmine-core": "~2.99.1",
     "jasmine-spec-reporter": "~4.2.1",
