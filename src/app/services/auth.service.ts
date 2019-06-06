@@ -11,17 +11,22 @@ import { environment } from 'src/environments/environment';
 import { Store } from '@ngrx/store';
 import { AppState } from '../store/app.reducers';
 import { ActivateLoadingAction, InactivateLoadingAction } from '../store/actions';
+import { SetUserAction } from '../store/actions/auth.actions';
+import { Subscription } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  private userSubscription: Subscription = new Subscription();
+
   constructor(
-    private afAuth: AngularFireAuth,
     public router: Router,
     private sbar: MatSnackBar,
+    private afAuth: AngularFireAuth,
     private afs: AngularFirestore,
-    private store: Store<AppState>) {}
+    private store: Store<AppState>
+  ) {}
 
   public createUser(
     name: string,
@@ -75,7 +80,15 @@ export class AuthService {
 
   public initAuthListener() {
     this.afAuth.authState.subscribe((user: FbUser) => {
-      console.log(user);
+      if (user) {
+        this.userSubscription = this.afs.doc(`${environment.cloudFirestorePath}/users/${user.uid}/user`).valueChanges()
+          .subscribe((fbUSer: User) => {
+            this.store.dispatch(new SetUserAction(fbUSer as User));
+          });
+      } else {
+        this.userSubscription.unsubscribe();
+        this.store.dispatch(new SetUserAction(null));
+      }
     });
   }
 
