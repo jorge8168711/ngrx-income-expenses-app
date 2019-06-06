@@ -8,61 +8,87 @@ import { AngularFireAuth } from '@angular/fire/auth';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { User } from '../models';
 import { environment } from 'src/environments/environment';
+import { Store } from '@ngrx/store';
+import { AppState } from '../store/app.reducers';
+import { ActivateLoadingAction, InactivateLoadingAction } from '../store/actions';
+import { SetUserAction } from '../store/actions/auth.actions';
+import { Subscription } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  private userSubscription: Subscription = new Subscription();
+
   constructor(
-    private afAuth: AngularFireAuth,
     public router: Router,
     private sbar: MatSnackBar,
-    private afs: AngularFirestore) {}
+    private afAuth: AngularFireAuth,
+    private afs: AngularFirestore,
+    private store: Store<AppState>
+  ) {}
 
   public createUser(
     name: string,
     email: string,
     password: string): void {
-    this.afAuth.auth.createUserWithEmailAndPassword(email, password)
-      .then(res => {
-        const user: User = {
-          name,
-          email: res.user.email,
-          uid: res.user.uid
-        };
+    this.store.dispatch(new ActivateLoadingAction());
 
-        this.afs.doc(`${environment.cloudFirestorePath}/users/${user.uid}/user`)
-          .set(user).then(() => {
-            this.router.navigate(['/']);
-            this.openSnackBar('user created succesfully', 'close', 2000);
-          });
-      })
-      .catch(err => {
-        this.openSnackBar(err.message, 'close', null);
-      });
+    this.afAuth.auth.createUserWithEmailAndPassword(email, password).then(res => {
+      const user: User = {
+        name,
+        email: res.user.email,
+        uid: res.user.uid
+      };
+
+      this.afs.doc(`${environment.cloudFirestorePath}/users/${user.uid}/user`)
+        .set(user).then(() => {
+          this.router.navigate(['/']);
+          this.openSnackBar('user created succesfully', 'close', 2000);
+          this.store.dispatch(new InactivateLoadingAction());
+        });
+    })
+    .catch(err => {
+      this.openSnackBar(err.message, 'close', null);
+      this.store.dispatch(new InactivateLoadingAction());
+    });
   }
 
   public signIn(email: string, password: string) {
-    this.afAuth.auth.signInWithEmailAndPassword(email, password)
-      .then(() => {
-        this.router.navigate(['/']);
-        this.openSnackBar('user logged succesfully', 'close', 2000);
-      })
-      .catch(err => {
-        this.openSnackBar(err.message, 'close', null);
-      });
+    this.store.dispatch(new ActivateLoadingAction());
+
+    this.afAuth.auth.signInWithEmailAndPassword(email, password).then(() => {
+      this.router.navigate(['/']);
+      this.openSnackBar('user logged succesfully', 'close', 2000);
+      this.store.dispatch(new InactivateLoadingAction());
+    })
+    .catch(err => {
+      this.store.dispatch(new InactivateLoadingAction());
+      this.openSnackBar(err.message, 'close', null);
+    });
   }
 
   public logout() {
+    this.store.dispatch(new ActivateLoadingAction());
+
     this.afAuth.auth.signOut().then(() => {
       this.router.navigate(['/auth']);
       this.openSnackBar('session finished succesfully', 'close', 2000);
+      this.store.dispatch(new InactivateLoadingAction());
     });
   }
 
   public initAuthListener() {
     this.afAuth.authState.subscribe((user: FbUser) => {
-      console.log(user);
+      if (user) {
+        this.userSubscription = this.afs.doc(`${environment.cloudFirestorePath}/users/${user.uid}/user`).valueChanges()
+          .subscribe((fbUSer: User) => {
+            this.store.dispatch(new SetUserAction(fbUSer as User));
+          });
+      } else {
+        this.userSubscription.unsubscribe();
+        this.store.dispatch(new SetUserAction(null));
+      }
     });
   }
 

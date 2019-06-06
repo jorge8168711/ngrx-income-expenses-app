@@ -1,10 +1,15 @@
 import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/services';
+import { Observable } from 'rxjs';
+import { UiState } from 'src/app/store/reducers';
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/store/app.reducers';
 
 @Component({
   selector: 'app-register.auth-form',
   template: /*html*/`
+    <mat-progress-bar mode="query" *ngIf="(loadingState | async).isLoadig"></mat-progress-bar>
     <mat-card>
       <form class="flex-column"
         [formGroup]="form"
@@ -47,8 +52,8 @@ import { AuthService } from 'src/app/services';
           mat-raised-button
           type="submit"
           color="primary"
-          [disabled]="form.invalid">
-          Register
+          [disabled]="form.invalid || (loadingState | async).isLoadig">
+          {{ (loadingState | async).isLoadig ? 'Creating user...' : 'Register' }}
         </button>
       </form>
     </mat-card>
@@ -63,8 +68,9 @@ import { AuthService } from 'src/app/services';
 export class RegisterComponent implements OnInit {
   public form: FormGroup;
   public formError = null;
+  public loadingState: Observable<UiState>;
 
-  constructor(private auth: AuthService) {}
+  constructor(private auth: AuthService, private store: Store<AppState>) {}
 
   ngOnInit(): void {
     this.form = new FormGroup({
@@ -72,6 +78,8 @@ export class RegisterComponent implements OnInit {
       email: new FormControl('', [Validators.email, Validators.required]),
       password: new FormControl('', Validators.required)
     });
+
+    this.loadingState = this.store.select('ui');
   }
 
   public onSubmit() {
