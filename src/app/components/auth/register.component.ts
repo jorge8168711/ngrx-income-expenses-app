@@ -15,9 +15,10 @@ import { AppState } from 'src/app/store/app.reducers';
         [formGroup]="form"
         (ngSubmit)="onSubmit()">
         <mat-form-field>
+          <mat-label>Name</mat-label>
+          <mat-icon matPrefix class="icon-prefix">person</mat-icon>
           <input matInput
             autocomplete="off"
-            placeholder="Name"
             type="text"
             formControlName="name">
 
@@ -25,8 +26,9 @@ import { AppState } from 'src/app/store/app.reducers';
         </mat-form-field>
 
         <mat-form-field>
+          <mat-label>Email</mat-label>
+          <mat-icon matPrefix class="icon-prefix">email</mat-icon>
           <input matInput
-            placeholder="Email"
             type="email"
             formControlName="email">
 
@@ -35,10 +37,17 @@ import { AppState } from 'src/app/store/app.reducers';
         </mat-form-field>
 
         <mat-form-field>
+          <mat-label>Password</mat-label>
+          <button class="icon-prefix"
+            mat-icon-button
+            matPrefix
+            (click)="togglePassword()"
+            type="button">
+            <mat-icon>{{ passwordVisibility ? 'visibility_off' : 'visibility' }} </mat-icon>
+          </button>
           <input matInput
             autocomplete="off"
-            placeholder="Password"
-            type="password"
+            [type]="passwordVisibility ? 'text' : 'password'"
             formControlName="password">
 
           <mat-error *ngIf="hasError('password', 'required')">The field is required</mat-error>
@@ -69,6 +78,7 @@ export class RegisterComponent implements OnInit {
   public form: FormGroup;
   public formError = null;
   public loadingState: Observable<UiState>;
+  public passwordVisibility = false;
 
   constructor(private auth: AuthService, private store: Store<AppState>) {}
 
@@ -92,5 +102,9 @@ export class RegisterComponent implements OnInit {
 
   public hasError(controlName: string, typeError: string): boolean {
     return this.form.get(controlName).hasError(typeError);
+  }
+
+  public togglePassword() {
+    this.passwordVisibility = !this.passwordVisibility;
   }
 }

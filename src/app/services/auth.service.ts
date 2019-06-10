@@ -19,6 +19,8 @@ import { Subscription } from 'rxjs';
 })
 export class AuthService {
   private userSubscription: Subscription = new Subscription();
+  // tslint:disable-next-line: variable-name
+  private _user: User;
 
   constructor(
     public router: Router,
@@ -28,25 +30,18 @@ export class AuthService {
     private store: Store<AppState>
   ) {}
 
-  public createUser(
-    name: string,
-    email: string,
-    password: string): void {
+  public createUser(name: string, email: string, password: string): void {
     this.store.dispatch(new ActivateLoadingAction());
 
     this.afAuth.auth.createUserWithEmailAndPassword(email, password).then(res => {
-      const user: User = {
-        name,
-        email: res.user.email,
-        uid: res.user.uid
-      };
+      const user: User = { name, email: res.user.email, uid: res.user.uid };
+      const path = `${environment.cloudFirestorePath}/users/${user.uid}/user`;
 
-      this.afs.doc(`${environment.cloudFirestorePath}/users/${user.uid}/user`)
-        .set(user).then(() => {
-          this.router.navigate(['/']);
-          this.openSnackBar('user created succesfully', 'close', 2000);
-          this.store.dispatch(new InactivateLoadingAction());
-        });
+      this.afs.doc(path).set(user).then(() => {
+        this.router.navigate(['/']);
+        this.openSnackBar('user created succesfully', 'close', 2000);
+        this.store.dispatch(new InactivateLoadingAction());
+      });
     })
     .catch(err => {
       this.openSnackBar(err.message, 'close', null);
@@ -81,13 +76,17 @@ export class AuthService {
   public initAuthListener() {
     this.afAuth.authState.subscribe((user: FbUser) => {
       if (user) {
-        this.userSubscription = this.afs.doc(`${environment.cloudFirestorePath}/users/${user.uid}/user`).valueChanges()
+        const path = `${environment.cloudFirestorePath}/users/${user.uid}/user`;
+
+        this.userSubscription = this.afs.doc(path).valueChanges()
           .subscribe((fbUSer: User) => {
             this.store.dispatch(new SetUserAction(fbUSer as User));
+            this.user = fbUSer;
           });
       } else {
         this.userSubscription.unsubscribe();
         this.store.dispatch(new SetUserAction(null));
+        this.user = null;
       }
     });
   }
@@ -105,5 +104,13 @@ export class AuthService {
   private openSnackBar(message: string, action: string, duration: any) {
     this.sbar.dismiss();
     this.sbar.open(message, action, { duration });
+  }
+
+  public set user(user: User) {
+    this._user = user;
+  }
+
+  public get user(): User {
+    return { ...this._user };
   }
 }

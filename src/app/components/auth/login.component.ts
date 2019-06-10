@@ -14,11 +14,10 @@ import { UiState } from 'src/app/store/reducers';
       <form class="flex-column"
         [formGroup]="form"
         (ngSubmit)="onSubmit()">
-
-
         <mat-form-field>
+          <mat-label>Email</mat-label>
+          <mat-icon matPrefix class="icon-prefix">email</mat-icon>
           <input matInput
-            placeholder="email"
             type="email"
             formControlName="email">
 
@@ -27,9 +26,16 @@ import { UiState } from 'src/app/store/reducers';
         </mat-form-field>
 
         <mat-form-field>
+          <mat-label>Password</mat-label>
+          <button class="icon-prefix"
+            mat-icon-button
+            matPrefix
+            (click)="togglePassword()"
+            type="button">
+            <mat-icon>{{ passwordVisibility ? 'visibility_off' : 'visibility' }} </mat-icon>
+          </button>
           <input matInput
-            placeholder="password"
-            type="password"
+            [type]="passwordVisibility ? 'text' : 'password'"
             formControlName="password"
             autocomplete="off">
 
@@ -61,13 +67,14 @@ export class LoginComponent implements OnInit {
   public form: FormGroup;
   public formError = null;
   public loadingState: Observable<UiState>;
+  public passwordVisibility = false;
 
   constructor(private auth: AuthService, private store: Store<AppState>) {}
 
   ngOnInit(): void {
     this.form = new FormGroup({
-      email: new FormControl('jorge.barron@amplemind.com', [Validators.email, Validators.required]),
-      password: new FormControl('password', Validators.required)
+      email: new FormControl('jorgeb8168711@gmail.com', [Validators.email, Validators.required]),
+      password: new FormControl('', Validators.required)
     });
 
     this.loadingState = this.store.select('ui');
@@ -79,5 +86,9 @@ export class LoginComponent implements OnInit {
 
   public hasError(controlName: string, typeError: string): boolean {
     return this.form.get(controlName).hasError(typeError);
+  }
+
+  public togglePassword() {
+    this.passwordVisibility = !this.passwordVisibility;
   }
 }

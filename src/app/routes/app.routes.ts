@@ -6,7 +6,6 @@ export const appRputes: Routes = [
   {
     path: '',
     loadChildren: () => import('../modules/main.module').then(m => m.MainModule),
-    pathMatch: 'full',
     canActivate: [ AuthGuardService ]
   },
   {

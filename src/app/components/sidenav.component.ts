@@ -1,8 +1,11 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component, ViewEncapsulation, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
 import { map } from 'rxjs/operators';
 import { AuthService } from '../services';
+import { UiState } from '../store/reducers';
+import { Store } from '@ngrx/store';
+import { AppState } from '../store/app.reducers';
 
 @Component({
   selector: 'app-sidenav',
@@ -16,9 +19,8 @@ import { AuthService } from '../services';
         <mat-toolbar>Menu</mat-toolbar>
 
         <mat-nav-list>
-          <a mat-list-item href="#">Link 1</a>
-          <a mat-list-item href="#">Link 2</a>
-          <a mat-list-item href="#">Link 3</a>
+          <a mat-list-item routerLink="/">Dashboard</a>
+          <a mat-list-item routerLink="/income">Income and expenses</a>
         </mat-nav-list>
       </mat-sidenav>
 
@@ -41,25 +43,44 @@ import { AuthService } from '../services';
             Logout
           </button>
         </mat-toolbar>
+        <mat-progress-bar mode="query" *ngIf="(loadingState$ | async).isLoadig"></mat-progress-bar>
 
-        <router-outlet></router-outlet>
+        <main class="main">
+          <router-outlet></router-outlet>
+        </main>
       </mat-sidenav-content>
     </mat-sidenav-container>
   `,
   styles: [ /*css*/`
+    mat-sidenav-content.mat-drawer-content,
     .sidenav-container {
       min-height: 100vh;
+    }
+
+    .sidenav {
+      width: 220px;
+    }
+
+    .main {
+      padding: 20px;
     }
   `],
   encapsulation: ViewEncapsulation.None
 })
-export class SidenavComponent {
+export class SidenavComponent implements OnInit {
+  public loadingState$: Observable<UiState>;
   public isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
     .pipe( map(result => result.matches) );
 
   constructor(
     private breakpointObserver: BreakpointObserver,
-    private auth: AuthService) {}
+    private auth: AuthService,
+    private store: Store<AppState>
+  ) {}
+
+  ngOnInit(): void {
+    this.loadingState$ = this.store.select('ui');
+  }
 
   public logout() {
     this.auth.logout();
