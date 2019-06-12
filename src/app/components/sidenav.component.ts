@@ -3,9 +3,10 @@ import { Observable } from 'rxjs';
 import { Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
 import { map } from 'rxjs/operators';
 import { AuthService } from '../services';
-import { UiState } from '../store/reducers';
+import { UiState, AuthState } from '../store/reducers';
 import { Store } from '@ngrx/store';
 import { AppState } from '../store/app.reducers';
+import { IncomeExpenseService } from '../services/income-expense.service';
 
 @Component({
   selector: 'app-sidenav',
@@ -16,12 +17,23 @@ import { AppState } from '../store/app.reducers';
         [mode]="(isHandset$ | async) ? 'over' : 'side'"
         [opened]="(isHandset$ | async) === false">
 
-        <mat-toolbar>Menu</mat-toolbar>
+        <mat-toolbar>Turtle...</mat-toolbar>
 
-        <mat-nav-list>
+        <section>
+          <p>{{ (userState$ | async).user?.name }}</p>
+          <p>{{ (userState$ | async).user?.email }}</p>
+        </section>
+
+        <button mat-button
+          type="button"
+          aria-label="Logout"
+          (click)="logout()">
+          Logout
+        </button>
+
+        <!-- <mat-nav-list>
           <a mat-list-item routerLink="/">Dashboard</a>
-          <a mat-list-item routerLink="/income">Income and expenses</a>
-        </mat-nav-list>
+        </mat-nav-list> -->
       </mat-sidenav>
 
       <mat-sidenav-content>
@@ -35,15 +47,11 @@ import { AppState } from '../store/app.reducers';
           </button>
 
           <span>Turtle...</span>
-
-          <button mat-button
-            type="button"
-            aria-label="Logout"
-            (click)="logout()">
-            Logout
-          </button>
         </mat-toolbar>
-        <mat-progress-bar mode="query" *ngIf="(loadingState$ | async).isLoadig"></mat-progress-bar>
+
+        <mat-progress-bar mode="query"
+          *ngIf="(loadingState$ | async).isLoadig">
+        </mat-progress-bar>
 
         <main class="main">
           <router-outlet></router-outlet>
@@ -68,6 +76,7 @@ import { AppState } from '../store/app.reducers';
   encapsulation: ViewEncapsulation.None
 })
 export class SidenavComponent implements OnInit {
+  public userState$: Observable<AuthState>;
   public loadingState$: Observable<UiState>;
   public isHandset$: Observable<boolean> = this.breakpointObserver.observe(Breakpoints.Handset)
     .pipe( map(result => result.matches) );
@@ -75,14 +84,17 @@ export class SidenavComponent implements OnInit {
   constructor(
     private breakpointObserver: BreakpointObserver,
     private auth: AuthService,
-    private store: Store<AppState>
+    private store: Store<AppState>,
+    private incomeExpense: IncomeExpenseService
   ) {}
 
   ngOnInit(): void {
     this.loadingState$ = this.store.select('ui');
+    this.userState$ = this.store.select('auth');
   }
 
   public logout() {
     this.auth.logout();
+    this.incomeExpense.cleanSubscriptions();
   }
 }

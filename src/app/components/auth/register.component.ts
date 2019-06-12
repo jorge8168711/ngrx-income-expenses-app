@@ -9,7 +9,7 @@ import { AppState } from 'src/app/store/app.reducers';
 @Component({
   selector: 'app-register.auth-form',
   template: /*html*/`
-    <mat-progress-bar mode="query" *ngIf="(loadingState | async).isLoadig"></mat-progress-bar>
+    <mat-progress-bar mode="query" *ngIf="(loadingState$ | async).isLoadig"></mat-progress-bar>
     <mat-card>
       <form class="flex-column"
         [formGroup]="form"
@@ -61,8 +61,8 @@ import { AppState } from 'src/app/store/app.reducers';
           mat-raised-button
           type="submit"
           color="primary"
-          [disabled]="form.invalid || (loadingState | async).isLoadig">
-          {{ (loadingState | async).isLoadig ? 'Creating user...' : 'Register' }}
+          [disabled]="form.invalid || (loadingState$ | async).isLoadig">
+          {{ (loadingState$ | async).isLoadig ? 'Creating user...' : 'Register' }}
         </button>
       </form>
     </mat-card>
@@ -77,7 +77,7 @@ import { AppState } from 'src/app/store/app.reducers';
 export class RegisterComponent implements OnInit {
   public form: FormGroup;
   public formError = null;
-  public loadingState: Observable<UiState>;
+  public loadingState$: Observable<UiState>;
   public passwordVisibility = false;
 
   constructor(private auth: AuthService, private store: Store<AppState>) {}
@@ -89,7 +89,7 @@ export class RegisterComponent implements OnInit {
       password: new FormControl('', Validators.required)
     });
 
-    this.loadingState = this.store.select('ui');
+    this.loadingState$ = this.store.select('ui');
   }
 
   public onSubmit() {

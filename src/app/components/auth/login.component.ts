@@ -9,7 +9,7 @@ import { UiState } from 'src/app/store/reducers';
 @Component({
   selector: 'app-login.auth-form',
   template: /*html*/`
-    <mat-progress-bar mode="query" *ngIf="(loadingState | async).isLoadig"></mat-progress-bar>
+    <mat-progress-bar mode="query" *ngIf="(loadingState$ | async).isLoadig"></mat-progress-bar>
     <mat-card class="flex-column" [formGroup]="form">
       <form class="flex-column"
         [formGroup]="form"
@@ -50,7 +50,7 @@ import { UiState } from 'src/app/store/reducers';
           mat-raised-button
           type="submit"
           color="primary"
-          [disabled]="form.invalid || (loadingState | async).isLoadig">
+          [disabled]="form.invalid || (loadingState$ | async).isLoadig">
           Login
         </button>
       </form>
@@ -66,7 +66,7 @@ import { UiState } from 'src/app/store/reducers';
 export class LoginComponent implements OnInit {
   public form: FormGroup;
   public formError = null;
-  public loadingState: Observable<UiState>;
+  public loadingState$: Observable<UiState>;
   public passwordVisibility = false;
 
   constructor(private auth: AuthService, private store: Store<AppState>) {}
@@ -77,7 +77,7 @@ export class LoginComponent implements OnInit {
       password: new FormControl('', Validators.required)
     });
 
-    this.loadingState = this.store.select('ui');
+    this.loadingState$ = this.store.select('ui');
   }
 
   public onSubmit(): void {

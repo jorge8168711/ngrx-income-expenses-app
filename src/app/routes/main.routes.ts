@@ -1,12 +1,12 @@
 import { Routes } from '@angular/router';
-import { SidenavComponent, DashboardComponent, IncomeExpensesComponent } from '../components';
+import { SidenavComponent } from '../components';
+import { DashboardComponent } from '../components/dashboard';
 
 export const mainRoutes: Routes = [
   {
     path: '', component: SidenavComponent,
     children: [
-      { path: '', component: DashboardComponent },
-      { path: 'income', component: IncomeExpensesComponent }
+      { path: '', component: DashboardComponent }
     ]
   }
 ];
