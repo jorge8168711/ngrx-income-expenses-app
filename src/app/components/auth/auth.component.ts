@@ -30,7 +30,9 @@ export class AuthComponent implements OnInit, OnDestroy {
       if (userAuth) {
         this.router.navigate(['/']);
       }
-    });
+    },
+    err => console.log(err),
+    () => console.log('completed'));
   }
 
   ngOnDestroy() {

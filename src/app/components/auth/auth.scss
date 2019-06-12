@@ -6,7 +6,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 300px;
+  width: 340px;
 
   .mat-card {
     width: 100%;
@@ -14,5 +14,12 @@
 
   &__submit {
     margin-top: 20px;
+  }
+
+  .mat-form-field-prefix .mat-icon-button.icon-prefix,
+  .icon-prefix {
+    margin-right: 15px;
+    vertical-align: bottom;
+    font-size: 18px;
   }
 }

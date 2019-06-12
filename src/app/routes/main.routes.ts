@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
-import { SidenavComponent, DashboardComponent } from '../components';
+import { SidenavComponent } from '../components';
+import { DashboardComponent } from '../components/dashboard';
 
 export const mainRoutes: Routes = [
   {

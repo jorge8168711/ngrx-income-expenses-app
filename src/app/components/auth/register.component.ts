@@ -9,15 +9,16 @@ import { AppState } from 'src/app/store/app.reducers';
 @Component({
   selector: 'app-register.auth-form',
   template: /*html*/`
-    <mat-progress-bar mode="query" *ngIf="(loadingState | async).isLoadig"></mat-progress-bar>
+    <mat-progress-bar mode="query" *ngIf="(loadingState$ | async).isLoadig"></mat-progress-bar>
     <mat-card>
       <form class="flex-column"
         [formGroup]="form"
         (ngSubmit)="onSubmit()">
         <mat-form-field>
+          <mat-label>Name</mat-label>
+          <mat-icon matPrefix class="icon-prefix">person</mat-icon>
           <input matInput
             autocomplete="off"
-            placeholder="Name"
             type="text"
             formControlName="name">
 
@@ -25,8 +26,9 @@ import { AppState } from 'src/app/store/app.reducers';
         </mat-form-field>
 
         <mat-form-field>
+          <mat-label>Email</mat-label>
+          <mat-icon matPrefix class="icon-prefix">email</mat-icon>
           <input matInput
-            placeholder="Email"
             type="email"
             formControlName="email">
 
@@ -35,10 +37,17 @@ import { AppState } from 'src/app/store/app.reducers';
         </mat-form-field>
 
         <mat-form-field>
+          <mat-label>Password</mat-label>
+          <button class="icon-prefix"
+            mat-icon-button
+            matPrefix
+            (click)="togglePassword()"
+            type="button">
+            <mat-icon>{{ passwordVisibility ? 'visibility_off' : 'visibility' }} </mat-icon>
+          </button>
           <input matInput
             autocomplete="off"
-            placeholder="Password"
-            type="password"
+            [type]="passwordVisibility ? 'text' : 'password'"
             formControlName="password">
 
           <mat-error *ngIf="hasError('password', 'required')">The field is required</mat-error>
@@ -52,8 +61,8 @@ import { AppState } from 'src/app/store/app.reducers';
           mat-raised-button
           type="submit"
           color="primary"
-          [disabled]="form.invalid || (loadingState | async).isLoadig">
-          {{ (loadingState | async).isLoadig ? 'Creating user...' : 'Register' }}
+          [disabled]="form.invalid || (loadingState$ | async).isLoadig">
+          {{ (loadingState$ | async).isLoadig ? 'Creating user...' : 'Register' }}
         </button>
       </form>
     </mat-card>
@@ -68,7 +77,8 @@ import { AppState } from 'src/app/store/app.reducers';
 export class RegisterComponent implements OnInit {
   public form: FormGroup;
   public formError = null;
-  public loadingState: Observable<UiState>;
+  public loadingState$: Observable<UiState>;
+  public passwordVisibility = false;
 
   constructor(private auth: AuthService, private store: Store<AppState>) {}
 
@@ -79,7 +89,7 @@ export class RegisterComponent implements OnInit {
       password: new FormControl('', Validators.required)
     });
 
-    this.loadingState = this.store.select('ui');
+    this.loadingState$ = this.store.select('ui');
   }
 
   public onSubmit() {
@@ -92,5 +102,9 @@ export class RegisterComponent implements OnInit {
 
   public hasError(controlName: string, typeError: string): boolean {
     return this.form.get(controlName).hasError(typeError);
+  }
+
+  public togglePassword() {
+    this.passwordVisibility = !this.passwordVisibility;
   }
 }
