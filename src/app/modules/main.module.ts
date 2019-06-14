@@ -9,9 +9,9 @@ import {
   DashboardTableComponent,
   DonutChartComponent } from '../components/dashboard';
 import { RouterModule } from '@angular/router';
-import { mainRoutes } from '../routes/main.routes';
 import { FilterArrayPipe } from '../pipes';
 import { ChartsModule } from 'ng2-charts';
+import { mainRoutes } from '../routes';
 
 @NgModule({
   declarations: [

@@ -95,13 +95,9 @@ export class AuthService {
   }
 
   public isAuthenticated(): Observable<boolean> {
-    return this.afAuth.authState.pipe(map((user: FbUser) => {
-      if (user == null) {
-        this.router.navigate(['/auth']);
-      }
-
-      return user != null;
-    }));
+    return this.afAuth.authState.pipe(
+      map((user: FbUser) => user != null)
+    );
   }
 
   private openSnackBar(message: string, action: string, duration: any): void {
