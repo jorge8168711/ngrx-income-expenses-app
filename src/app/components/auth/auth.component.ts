@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthService } from 'src/app/services';
 import { Router } from '@angular/router';
+import { SubSink } from 'subsink';
 
 @Component({
   selector: 'app-auth',
@@ -19,14 +20,21 @@ import { Router } from '@angular/router';
   `
   ]
 })
-export class AuthComponent implements OnInit {
+export class AuthComponent implements OnInit, OnDestroy {
+  private subs = new SubSink();
+
   constructor(private auth: AuthService, private router: Router) {}
 
   ngOnInit(): void {
-    this.auth.isAuthenticated().subscribe(userAuth => {
+    this.subs.sink = this.auth.isAuthenticated().subscribe(userAuth => {
       if (userAuth) {
         this.router.navigate(['/']);
       }
-    });
+    },
+    err => console.log(err));
+  }
+
+  ngOnDestroy() {
+    this.subs.unsubscribe();
   }
 }

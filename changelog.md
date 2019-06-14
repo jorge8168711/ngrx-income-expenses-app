@@ -12,3 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Base angular structure
 - Firebase configuration
 - sidenav and dashboard components
+
+## [1.0.0] - 2019-06-14
+### Added
+- NGRX configuration
+- Firebase auth and income expenses
+- Auth guards
+- Income expenses components
+- Deploy scripts for github pages
+### Changed
+- Routes refactor
+- Auth services
