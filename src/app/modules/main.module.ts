@@ -10,7 +10,6 @@ import {
   DonutChartComponent } from '../components/dashboard';
 import { RouterModule } from '@angular/router';
 import { mainRoutes } from '../routes/main.routes';
-import { ReactiveFormsModule } from '@angular/forms';
 import { FilterArrayPipe } from '../pipes';
 import { ChartsModule } from 'ng2-charts';
 
@@ -26,7 +25,6 @@ import { ChartsModule } from 'ng2-charts';
   ],
   imports: [
     SharedModule,
-    ReactiveFormsModule,
     ChartsModule,
     RouterModule.forChild(mainRoutes)
   ],
