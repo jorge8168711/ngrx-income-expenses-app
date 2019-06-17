@@ -1,8 +1,13 @@
 import * as fromIncomeExpense from '../actions/income-expense.actions';
 import { IncomeExpense } from 'src/app/models';
+import { AppState } from '../app.reducers';
 
 export interface IncomeExpenseState {
   items: IncomeExpense[];
+}
+
+export interface AppState extends AppState {
+  incomeExpense: IncomeExpenseState;
 }
 
 const initialState = {

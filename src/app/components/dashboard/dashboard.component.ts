@@ -3,14 +3,14 @@ import { MatDialog } from '@angular/material';
 import { NewRecordDialogComponent } from '../new-record-dialog.component';
 import { IncomeExpenseService } from 'src/app/services/income-expense.service';
 import { Store } from '@ngrx/store';
-import { AppState } from 'src/app/store/app.reducers';
+import * as fromIncomeExpense from '../../store/reducers/income-expense.reducers';
 import { IncomeExpenseState } from 'src/app/store/reducers';
-import { Observable } from 'rxjs';
 import { IncomeExpense } from 'src/app/models';
 
 interface Income { total: number; qty: number; }
 interface Expense { total: number; qty: number; }
 export interface DashboardData {
+  items: IncomeExpense[];
   income: Income;
   expense: Expense;
   difference?: number;
@@ -21,7 +21,7 @@ export interface DashboardData {
   template: /*html*/ `
     <h1 class="mat-h1">Dashboard</h1>
     <section class="dashboard">
-      <app-dashboard-table [data]="(this.incomeExpenseState$ | async).items"></app-dashboard-table>
+      <app-dashboard-table [data]="dashboardData.items"></app-dashboard-table>
 
       <mat-card>
         <mat-icon>arrow_upward</mat-icon>
@@ -43,7 +43,7 @@ export interface DashboardData {
         <p>{{ (dashboardData.difference | currency) || 0 }}</p>
       </mat-card>
 
-      <app-donut-chart [data]="(this.incomeExpenseState$ | async).items"></app-donut-chart>
+      <app-donut-chart [data]="dashboardData.items"></app-donut-chart>
     </section>
 
     <button mat-fab color="accent" (click)="addNewRecord()">
@@ -64,8 +64,8 @@ export interface DashboardData {
   `]
 })
 export class DashboardComponent implements OnInit {
-  public incomeExpenseState$: Observable<IncomeExpenseState>;
   public dashboardData: DashboardData = {
+    items: [],
     income: { total: 0, qty: 0 },
     expense: { total: 0, qty: 0 },
     difference: 0
@@ -74,13 +74,13 @@ export class DashboardComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private incomeExpense: IncomeExpenseService,
-    private store: Store<AppState>,
+    private store: Store<fromIncomeExpense.AppState>,
   ) {}
 
   ngOnInit(): void {
     this.incomeExpense.initIncomeExpenseListener();
-    this.incomeExpenseState$ = this.store.select('incomeExpense');
     this.store.select('incomeExpense').subscribe((state: IncomeExpenseState) => {
+      this.dashboardData.items = state.items;
       this.dashboardData.income.total = this.getTotalAmount(state.items, 'income');
       this.dashboardData.income.qty = this.getTotalItems(state.items, 'income');
 
@@ -89,8 +89,6 @@ export class DashboardComponent implements OnInit {
 
       this.dashboardData.difference =
         this.dashboardData.income.total - this.dashboardData.expense.total;
-
-      console.log(this.dashboardData);
     });
   }
 

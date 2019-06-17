@@ -12,6 +12,8 @@ import { RouterModule } from '@angular/router';
 import { FilterArrayPipe } from '../pipes';
 import { ChartsModule } from 'ng2-charts';
 import { mainRoutes } from '../routes';
+import { StoreModule } from '@ngrx/store';
+import { incomeExpenseReducer } from '../store/reducers';
 
 @NgModule({
   declarations: [
@@ -26,7 +28,8 @@ import { mainRoutes } from '../routes';
   imports: [
     SharedModule,
     ChartsModule,
-    RouterModule.forChild(mainRoutes)
+    RouterModule.forChild(mainRoutes),
+    StoreModule.forFeature('incomeExpense', incomeExpenseReducer)
   ],
   exports: [
     DashboardTableComponent,
